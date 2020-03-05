@@ -1,6 +1,8 @@
 #!/bin/bash
 
 AUR_PATH="/home/$USER/AUR"
+PREFIX="$AUR_PATH/"
+PREFIX_LEN=${#PREFIX}
 
 
 # TODO check if the folder aur exists
@@ -8,15 +10,16 @@ AUR_PATH="/home/$USER/AUR"
 for folder in $AUR_PATH/*/ ; do
 	cd $folder
 	git_output=$(git pull)
+	sw_name=${folder:$PREFIX_LEN:-1}
 	if [ "$git_output" == "Already up to date." ] ; then
-		echo "${folder::-1} is up-to-date"
+		echo "$sw_name is up-to-date"
 	else
-		echo "${folder::-1} is not up-to-date"
+		echo "$sw_name is not up-to-date"
 		read -p "Do you wish to upgrade '$folder'? " yn
 		case $yn in
 			[Yy]* ) makepkg -si;;
 			[Nn]* ) ;;
-			* ) echo "${folder::-1}: upgrade aborted"
+			* ) echo "$sw_name: upgrade aborted"
 		esac
 	fi
 	cd ..
