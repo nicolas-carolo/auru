@@ -34,7 +34,7 @@ function check_for_updates() {
 			echo "$sw_name is not up-to-date"
 			read -p "Do you wish to upgrade '$sw_name'? " yn
 			case $yn in
-				[Yy]* ) users_says_yes_to_update;;
+				[Yy]* ) user_says_yes_to_update;;
 				[Nn]* ) user_says_no_to_update;;
 				* ) user_says_no_to_update; echo "$sw_name: upgrade aborted"
 			esac
