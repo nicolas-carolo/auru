@@ -45,7 +45,7 @@ $ sudo sh install.sh
 For a list of all commands you can run and for the relative functionalities run:
 
 ```sh
-man auru
+$ man auru
 ```
 
 
