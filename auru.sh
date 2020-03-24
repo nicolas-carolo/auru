@@ -44,10 +44,53 @@ function check_for_updates() {
 }
 
 
+
+function get_package() {
+	regex='(https?|ftp|file)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]'
+	if [[ $1  =~ $regex ]] ; then 
+    		sw_name=$(echo $1 | sed -e 's/.*\/\(.*\).git.*/\1/')
+		exists=$(git ls-remote -h $1)
+		if [[ "$exists" != "" ]] ; then
+ 			read -p "Do you wish to download and install '$sw_name'? " yn
+ 			case $yn in
+ 				[Yy]* ) install_package "$1" "$sw_name";;
+ 				[Nn]* ) echo "$sw_name: installation aborted";;
+				* ) echo "$sw_name: installation aborted"
+			esac
+		else
+			echo "ERROR: '$1' repository not found"
+			exit 1
+		fi
+	else
+		exists=$(git ls-remote -h https://aur.archlinux.org/$1.git)
+		if [[ "$exists" != "" ]] ; then
+			read -p "Do you wish to download and install '$1'? " yn
+ 			case $yn in
+				[Yy]* ) install_package "https://aur.archlinux.org/$1.git" "$1";;
+				[Nn]* ) echo "$1: installation aborted";;
+				* ) echo "$1: installation aborted"
+			esac
+		else    
+			echo "ERROR: '$1' repository not found"
+			exit 1
+		fi    		
+	fi
+}
+
+
+function install_package() {
+	cd $AUR_PATH
+	git clone $1
+	cd ./$2
+	makepkg -si
+}
+
+
 function get_help() {
 	echo -e "usage:\t auru <operation>"
 	echo -e "operations"
 	echo -e "\tauru {-h --help}"
+	echo -e "\tauru {-S --sync} <package>"
 	echo -e "\tauru {-U --upgrade}"
 	echo -e "\tauru {-V --version}"
 }
@@ -55,7 +98,7 @@ function get_help() {
 
 function get_software_info() {
 	echo -e "\n--------------------------------------------------------------------------------------------------\n"
-	echo -e "\tauru v.0.1.0"
+	echo -e "\tauru v.0.2.0"
 	echo -e "\tCopyright © 2020, Nicolas Carolo. All rights reserved."
 
 	echo -e "\tRedistribution and use in source and binary forms, with or without modification,"
@@ -90,6 +133,8 @@ operation=$1
 case $operation in
 	-U ) check_for_updates;;
 	--upgrade ) check_for_updates;;
+	-S ) get_package "$2";;
+	--sync ) get_package "$2";;
 	-V ) get_software_info;;
 	--version ) get_software_info;;
 	* ) get_help 

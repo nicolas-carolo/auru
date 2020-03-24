@@ -5,9 +5,9 @@ Author: Nicolas Carolo <nicolascarolo.dev@gmail.com>
 
 Copyright: © 2020, Nicolas Carolo.
 
-Date: 2020-03-19
+Date: 2020-03-24
 
-Version: 0.1.0
+Version: 0.2.0
 
 
 ## PURPOSE
@@ -36,7 +36,7 @@ We can install _auru_ simply by doing:
 ```sh
 $ git clone https://github.com/nicolas-carolo/auru
 $ cd auru
-$ sudo chmod +x install.sh
+$ chmod +x install.sh
 $ sudo sh install.sh
 ```
 
