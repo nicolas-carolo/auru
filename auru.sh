@@ -4,6 +4,9 @@ AUR_PATH="/home/$USER/AUR"
 PREFIX="$AUR_PATH/"
 PREFIX_LEN=${#PREFIX}
 
+bold=$(tput bold)
+normal=$(tput sgr0)
+
 
 # TODO check if the folder aur exists
 
@@ -29,9 +32,9 @@ function check_for_updates() {
 		git_output=$(git pull)
 		sw_name=${folder:$PREFIX_LEN:-1}
 		if [ "$git_output" == "Already up to date." ] && ! [ -f "./.aur_tbu" ]  ; then
-			echo "$sw_name is up-to-date"
+			echo "${bold}$sw_name${normal} is up-to-date"
 		else
-			echo "$sw_name is not up-to-date"
+			echo "${bold}$sw_name${normal} is not up-to-date"
 			read -p "Do you wish to upgrade '$sw_name'? " yn
 			case $yn in
 				[Yy]* ) user_says_yes_to_update;;
@@ -40,6 +43,16 @@ function check_for_updates() {
 			esac
 		fi
 		cd ..
+	done
+}
+
+
+
+function list_packages() {
+	for folder in $AUR_PATH/*/ ; do
+		cd $folder
+		sw_name=${folder:$PREFIX_LEN:-1}
+		echo "${bold}$sw_name${normal}"
 	done
 }
 
@@ -87,10 +100,11 @@ function install_package() {
 
 
 function get_help() {
-	echo -e "usage:\t auru <operation>"
-	echo -e "operations"
+	echo -e "usage:\t auru <operation> [...]"
+	echo -e "operations:"
 	echo -e "\tauru {-h --help}"
-	echo -e "\tauru {-S --sync} <package>"
+	echo -e "\tauru {-Q --query}"
+	echo -e "\tauru {-S --sync} <package | repository link>"
 	echo -e "\tauru {-U --upgrade}"
 	echo -e "\tauru {-V --version}"
 }
@@ -98,7 +112,7 @@ function get_help() {
 
 function get_software_info() {
 	echo -e "\n--------------------------------------------------------------------------------------------------\n"
-	echo -e "\tauru v.0.2.0"
+	echo -e "\tauru v.0.2.1"
 	echo -e "\tCopyright © 2020, Nicolas Carolo. All rights reserved."
 
 	echo -e "\tRedistribution and use in source and binary forms, with or without modification,"
@@ -131,6 +145,8 @@ function get_software_info() {
 
 operation=$1
 case $operation in
+	-Q ) list_packages;;
+	--query ) list_packages;;
 	-U ) check_for_updates;;
 	--upgrade ) check_for_updates;;
 	-S ) get_package "$2";;
