@@ -15,7 +15,7 @@ Copyright: © 2020, Nicolas Carolo.
 
 Date: 2020-03-29
 
-Version: 0.3.0
+Version: 0.4.0
 
 
 ## PURPOSE

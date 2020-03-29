@@ -74,11 +74,13 @@ function list_packages() {
 	fi
 	for folder in $AUR_PATH/*/ ; do
 		cd $folder
+		pkg_version=$(sed -n -e '/pkgver=/ s/.*\= *//p' PKGBUILD | head -n 1)
+		pkg_rel=$(sed -n -e '/pkgrel=/ s/.*\= *//p' PKGBUILD | head -n 1)
 		sw_name=${folder:$PREFIX_LEN:-1}
 		if ! [ -f ".auruignore" ] ; then
-			echo -e "${GREEN}${bold}$sw_name${normal}${DEFAULT_COLOR}"
+			echo -e "${bold}$sw_name${GREEN} $pkg_version-$pkg_rel${normal}${DEFAULT_COLOR}"
 		else
-			echo -e "${RED}${bold}$sw_name${normal}${DEFAULT_COLOR}"
+			echo -e "${bold}${RED}$sw_name $pkg_version-$pkg_rel${normal}${DEFAULT_COLOR}: not installed"
 		fi
 	done
 }
@@ -169,7 +171,7 @@ function remove_package() {
 		exit 1
 	fi
 	cd $path
-	pkg_name=$(sed -n -e '/pkgname/ s/.*\= *//p' PKGBUILD)
+	pkg_name=$(sed -n -e '/pkgname=/ s/.*\= *//p' PKGBUILD | head -n 1)
 	pacman -R $pkg_name
 
 	read -p "Do you wish to delete also the local git repository of '$1'? " yn
@@ -207,7 +209,7 @@ echo -e "\t|_|  (_)\`---(_)|_| \)\ \`---(_)"
 echo -e "\t                   (__)      "
 echo -e "\n${DEFAULT_COLOR}"
 
-	echo -e "\tauru v.0.3.0"
+	echo -e "\tauru v.0.4.0"
 	echo -e "\tCopyright © 2020, Nicolas Carolo. All rights reserved."
 
 	echo -e "\tRedistribution and use in source and binary forms, with or without modification,"
