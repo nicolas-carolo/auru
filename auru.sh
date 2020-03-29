@@ -34,6 +34,14 @@ function user_says_yes_to_update() {
 
 
 function check_for_updates() {
+	if [ $(id -u) = 0 ]; then
+		echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} This action must NOT be executed as 'root'"
+		exit 1
+	fi
+	if [ $(find $AUR_PATH -mindepth 1 -maxdepth 1 -type d | wc -l) = 0 ] ; then
+		echo -e "${YELLOW}${bold}No repository installed${normal}${DEFAULT_COLOR}"
+		exit 0
+	fi
 	for folder in $AUR_PATH/*/ ; do
 		cd $folder
 		sw_name=${folder:$PREFIX_LEN:-1}
@@ -60,6 +68,10 @@ function check_for_updates() {
 
 
 function list_packages() {
+	if [ $(id -u) = 0 ]; then
+		echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} This action must NOT be executed as 'root'"
+		exit 1
+	fi
 	for folder in $AUR_PATH/*/ ; do
 		cd $folder
 		sw_name=${folder:$PREFIX_LEN:-1}
@@ -74,6 +86,14 @@ function list_packages() {
 
 
 function get_package() {
+	if [ $(id -u) = 0 ]; then
+		echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} This action must NOT be executed as 'root'"
+		exit 1
+	fi
+	if [ -z "$1" ]; then
+		echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} missing argument"
+		exit 1
+	fi
 	regex='(https?|ftp|file)://[-A-Za-z0-9\+&@#/%?=~_|!:,.;]*[-A-Za-z0-9\+&@#/%=~_|]'
 	if [[ $1  =~ $regex ]] ; then 
     		sw_name=$(echo $1 | sed -e 's/.*\/\(.*\).git.*/\1/')
@@ -116,6 +136,14 @@ function install_package() {
 
 
 function build_package() {
+	if [ $(id -u) = 0 ]; then
+		echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} This action must NOT be executed as 'root'"
+		exit 1
+	fi
+	if [ -z "$1" ]; then
+		echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} missing argument"
+		exit 1
+	fi
 	cd $AUR_PATH/$1
 	makepkg -si
 	if [ -f ".auruignore" ] ; then
@@ -128,6 +156,10 @@ function build_package() {
 function remove_package() {
 	if ! [ $(id -u) = 0 ]; then
 		echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} This action must be executed as 'root'"
+		exit 1
+	fi
+	if [ -z "$1" ]; then
+		echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} missing argument"
 		exit 1
 	fi
 	path="$SUDO_AUR_PATH$1"
