@@ -1,13 +1,21 @@
 # auru: A shell script for keeping AUR packages up-to-date
-
+```
+  .--.  .-. .-.,---.  .-. .-. 
+ / /\ \ | | | || .-.\ | | | | 
+/ /__\ \| | | || `-'/ | | | | 
+|  __  || | | ||   (  | | | | 
+| |  |)|| `-')|| |\ \ | `-')| 
+|_|  (_)`---(_)|_| \)\`---(_) 
+                   (__)       
+```
 
 Author: Nicolas Carolo <nicolascarolo.dev@gmail.com>
 
 Copyright: © 2020, Nicolas Carolo.
 
-Date: 2020-03-24
+Date: 2020-03-29
 
-Version: 0.2.0
+Version: 0.3.0
 
 
 ## PURPOSE

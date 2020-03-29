@@ -1,11 +1,17 @@
 #!/bin/bash
 
 AUR_PATH="/home/$USER/AUR"
+SUDO_AUR_PATH="/home/$SUDO_USER/AUR/"
 PREFIX="$AUR_PATH/"
 PREFIX_LEN=${#PREFIX}
 
 bold=$(tput bold)
 normal=$(tput sgr0)
+DEFAULT_COLOR="\e[39m"
+GREEN="\e[32m"
+YELLOW="\e[33m"
+RED="\e[31m"
+LIGHT_CYAN="\e[96m"
 
 
 # TODO check if the folder aur exists
@@ -18,29 +24,34 @@ function user_says_no_to_update() {
 
 
 function user_says_yes_to_update() {
-        if [ -f "./.aur_tbu" ]; then
+	makepkg -si
+	if [ -f "./.aur_tbu" ]; then
 		rm .aur_tbu
 		git pull
 	fi
-	makepkg -si
 }
+
 
 
 function check_for_updates() {
 	for folder in $AUR_PATH/*/ ; do
 		cd $folder
-		git_output=$(git pull)
 		sw_name=${folder:$PREFIX_LEN:-1}
-		if [ "$git_output" == "Already up to date." ] && ! [ -f "./.aur_tbu" ]  ; then
-			echo "${bold}$sw_name${normal} is up-to-date"
+		if ! [ -f ".auruignore" ] ; then
+			git_output=$(git pull)
+			if [ "$git_output" == "Already up to date." ] && ! [ -f "./.aur_tbu" ]  ; then
+				echo -e "${GREEN}${bold}$sw_name${normal}${DEFAULT_COLOR} is up-to-date"
+			else
+				echo -e "${YELLOW}${bold}$sw_name${normal}${DEFAULT_COLOR} is not up-to-date"
+				read -p "Do you wish to upgrade '$sw_name'? " yn
+				case $yn in
+					[Yy]* ) user_says_yes_to_update;;
+					[Nn]* ) user_says_no_to_update;;
+					* ) user_says_no_to_update; echo "${RED}${bold}$sw_name:${normal}${DEFAULT_COLOR} upgrade aborted"
+				esac
+			fi
 		else
-			echo "${bold}$sw_name${normal} is not up-to-date"
-			read -p "Do you wish to upgrade '$sw_name'? " yn
-			case $yn in
-				[Yy]* ) user_says_yes_to_update;;
-				[Nn]* ) user_says_no_to_update;;
-				* ) user_says_no_to_update; echo "$sw_name: upgrade aborted"
-			esac
+			echo -e "${RED}${bold}$sw_name:${normal}${DEFAULT_COLOR} ignored"
 		fi
 		cd ..
 	done
@@ -52,7 +63,11 @@ function list_packages() {
 	for folder in $AUR_PATH/*/ ; do
 		cd $folder
 		sw_name=${folder:$PREFIX_LEN:-1}
-		echo "${bold}$sw_name${normal}"
+		if ! [ -f ".auruignore" ] ; then
+			echo -e "${GREEN}${bold}$sw_name${normal}${DEFAULT_COLOR}"
+		else
+			echo -e "${RED}${bold}$sw_name${normal}${DEFAULT_COLOR}"
+		fi
 	done
 }
 
@@ -99,11 +114,48 @@ function install_package() {
 }
 
 
+
+function build_package() {
+	cd $AUR_PATH/$1
+	makepkg -si
+	if [ -f ".auruignore" ] ; then
+		rm .auruignore
+	fi
+}
+
+
+
+function remove_package() {
+	if ! [ $(id -u) = 0 ]; then
+		echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} This action must be executed as 'root'"
+		exit 1
+	fi
+	path="$SUDO_AUR_PATH$1"
+	echo $path
+	if ! [ -d $path ] ; then
+		echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} '$1' is not installed"
+		exit 1
+	fi
+	cd $path
+	pkg_name=$(sed -n -e '/pkgname/ s/.*\= *//p' PKGBUILD)
+	pacman -R $pkg_name
+
+	read -p "Do you wish to delete also the local git repository of '$1'? " yn
+	case $yn in
+		[Yy]* ) cd .. ; rm -fr ./$1 ;;
+		[Nn]* ) sudo -u $SUDO_USER touch .auruignore ; exit 0 ;;
+		* ) sudo -u $SUDO_USER touch .auruignore ; exit 0
+	esac
+}
+
+
 function get_help() {
 	echo -e "usage:\t auru <operation> [...]"
 	echo -e "operations:"
 	echo -e "\tauru {-h --help}"
+	echo -e "\tauru {-B --build} <package>"
 	echo -e "\tauru {-Q --query}"
+	echo -e "\tauru {-R --remove} <package>"
 	echo -e "\tauru {-S --sync} <package | repository link>"
 	echo -e "\tauru {-U --upgrade}"
 	echo -e "\tauru {-V --version}"
@@ -112,7 +164,18 @@ function get_help() {
 
 function get_software_info() {
 	echo -e "\n--------------------------------------------------------------------------------------------------\n"
-	echo -e "\tauru v.0.2.1"
+
+
+echo -e "${LIGHT_CYAN}\t  .--.  .-. .-.,---.  .-. .-." 
+echo -e "\t / /\ \ | | | || .-.\ | | | |" 
+echo -e "\t/ /__\ \| | | || \`-'/ | | | |" 
+echo -e "\t|  __  || | | ||   (  | | | |" 
+echo -e "\t| |  |)|| \`-')|| |\ \ | \`-')|" 
+echo -e "\t|_|  (_)\`---(_)|_| \)\ \`---(_)" 
+echo -e "\t                   (__)      "
+echo -e "\n${DEFAULT_COLOR}"
+
+	echo -e "\tauru v.0.3.0"
 	echo -e "\tCopyright © 2020, Nicolas Carolo. All rights reserved."
 
 	echo -e "\tRedistribution and use in source and binary forms, with or without modification,"
@@ -145,8 +208,12 @@ function get_software_info() {
 
 operation=$1
 case $operation in
+	-B ) build_package "$2";;
+	--build ) build_package "$2";;
 	-Q ) list_packages;;
 	--query ) list_packages;;
+	-R ) remove_package "$2";;
+	--remove ) remove_package "$2";;
 	-U ) check_for_updates;;
 	--upgrade ) check_for_updates;;
 	-S ) get_package "$2";;
