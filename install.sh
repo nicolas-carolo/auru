@@ -25,6 +25,7 @@ if ! [ -d "$SUDO_AUR_PATH" ] ; then
 fi
 
 
+# TODO edit cp
 # Create auru folder
 sudo -u $SUDO_USER cp -r ../auru $SUDO_AUR_PATH
 
