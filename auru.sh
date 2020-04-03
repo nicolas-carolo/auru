@@ -33,16 +33,16 @@ function user_says_yes_to_update() {
 
 
 function user_says_yes_to_update_auru() {
-	sh install.sh
 	if [ -f "./.aur_tbu" ]; then
 		rm .aur_tbu
 	fi
+	sh install.sh
 }
 
 
 function update_auru() {
 	cd ${SUDO_AUR_PATH}auru
-	sudo -u $SUDO_USER git_output=$(git pull)
+	git_output=$(sudo -u $SUDO_USER git pull)
 	if [ "$git_output" == "Already up to date." ] && ! [ -f "./.aur_tbu" ]  ; then
 		echo -e "${GREEN}${bold}auru${normal}${DEFAULT_COLOR} is up-to-date"
 	else
@@ -59,8 +59,8 @@ function update_auru() {
 
 
 function check_for_updates() {
-	if [ $(id -u) = 0 ] && [[ "$2" == "auru" ]] ; then
-		update auru
+	if [ $(id -u) = 0 ] && [[ "$1" == "auru" ]] ; then
+		update_auru
 		exit 0
 	fi
 	if [ $(id -u) = 0 ]; then
@@ -79,13 +79,17 @@ function check_for_updates() {
 			if [ "$git_output" == "Already up to date." ] && ! [ -f "./.aur_tbu" ]  ; then
 				echo -e "${GREEN}${bold}$sw_name${normal}${DEFAULT_COLOR} is up-to-date"
 			else
-				echo -e "${YELLOW}${bold}$sw_name${normal}${DEFAULT_COLOR} is not up-to-date"
-				read -p "Do you wish to upgrade '$sw_name'? " yn
-				case $yn in
-					[Yy]* ) user_says_yes_to_update;;
-					[Nn]* ) user_says_no_to_update;;
-					* ) user_says_no_to_update; echo "${RED}${bold}$sw_name:${normal}${DEFAULT_COLOR} upgrade aborted"
-				esac
+				if ! [ "$sw_name" == "auru" ] ; then
+					echo -e "${YELLOW}${bold}$sw_name${normal}${DEFAULT_COLOR} is not up-to-date"
+					read -p "Do you wish to upgrade '$sw_name'? " yn
+					case $yn in
+						[Yy]* ) user_says_yes_to_update;;
+						[Nn]* ) user_says_no_to_update;;
+						* ) user_says_no_to_update; echo "${RED}${bold}$sw_name:${normal}${DEFAULT_COLOR} upgrade aborted"
+					esac
+				else
+					echo -e "${YELLOW}${bold}$sw_name${normal}${DEFAULT_COLOR} is not up-to-date. Run '${bold}sudo auru -U auru${normal}' to update"
+				fi
 			fi
 		else
 			echo -e "${RED}${bold}$sw_name:${normal}${DEFAULT_COLOR} ignored"
@@ -277,8 +281,8 @@ case $operation in
 	--query ) list_packages;;
 	-R ) remove_package "$2";;
 	--remove ) remove_package "$2";;
-	-U ) check_for_updates;;
-	--upgrade ) check_for_updates;;
+	-U ) check_for_updates "$2";;
+	--upgrade ) check_for_updates "$2";;
 	-S ) get_package "$2";;
 	--sync ) get_package "$2";;
 	-V ) get_software_info;;

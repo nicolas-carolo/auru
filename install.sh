@@ -25,6 +25,10 @@ if ! [ -d "$SUDO_AUR_PATH" ] ; then
 fi
 
 
+# Create auru folder
+sudo -u $SUDO_USER cp -r ../auru $SUDO_AUR_PATH
+
+
 # Create auru manual entry
 if ! [ -d "/usr/local/share/man/man8" ] ; then
 	mkdir /usr/local/share/man/man8
