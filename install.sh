@@ -12,10 +12,13 @@ RED="\e[31m"
 LIGHT_CYAN="\e[96m"
 
 
+
 if ! [ $(id -u) = 0 ]; then
 	echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} The installation script must be run as 'root'"
 	exit 1
 fi
+
+echo "Running the installer"
 
 cp auru.sh /usr/bin/auru
 
