@@ -1,6 +1,6 @@
 .\" Manpage for auru.
 .\" Contact nicolascarolo.dev@gmail.com to correct errors or typos.
-.TH auru 8 "4 April 2020" "0.5.0" "auru man page"
+.TH auru 8 "4 April 2020" "0.5.1" "auru man page"
 .SH NAME
 auru \- update AUR packages
 .SH SYNOPSIS

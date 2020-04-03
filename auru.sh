@@ -217,6 +217,10 @@ function build_package() {
 		echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} missing argument"
 		exit 1
 	fi
+	if [ "$1" == "auru" ] ; then
+		echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} 'auru' is not an AUR package"
+		exit 1
+	fi
 	cd $AUR_PATH/$1
 	makepkg -si
 	if [ -f ".auruignore" ] ; then
@@ -233,6 +237,10 @@ function remove_package() {
 	fi
 	if [ -z "$1" ]; then
 		echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} missing argument"
+		exit 1
+	fi
+	if [ "$1" == "auru" ] ; then
+		echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} 'auru' is not an AUR package"
 		exit 1
 	fi
 	path="$SUDO_AUR_PATH$1"
@@ -280,7 +288,7 @@ echo -e "\t|_|  (_)\`---(_)|_| \)\ \`---(_)"
 echo -e "\t                   (__)      "
 echo -e "\n${DEFAULT_COLOR}"
 
-	echo -e "\tauru v.0.5.0"
+	echo -e "\tauru v.0.5.1"
 	echo -e "\tCopyright © 2020, Nicolas Carolo. All rights reserved."
 
 	echo -e "\tRedistribution and use in source and binary forms, with or without modification,"
