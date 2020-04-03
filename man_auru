@@ -22,7 +22,7 @@ Remove an AUR package
 Check whether an AUR package is available and install it
 .TP
 .B -U, --upgrade
-Check whether there are available updates for AUR packages
+Check whether there are available updates for all AUR packages or for a specific package
 .TP
 .B -V, --version
 Show information on the version of the software

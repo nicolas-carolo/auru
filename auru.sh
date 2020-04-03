@@ -42,7 +42,7 @@ function user_says_yes_to_update_auru() {
 
 function update_auru() {
 	cd ${SUDO_AUR_PATH}auru
-	git_output=$(sudo -u $SUDO_USER git pull --force)
+	git_output=$(sudo -u $SUDO_USER git pull)
 	if [ "$git_output" == "Already up to date." ] && ! [ -f "./.aur_tbu" ]  ; then
 		echo -e "${GREEN}${bold}auru${normal}${DEFAULT_COLOR} is up-to-date"
 	else
@@ -53,6 +53,36 @@ function update_auru() {
 			[Nn]* ) user_says_no_to_update;;
 			* ) user_says_no_to_update; echo "${RED}${bold}auru:${normal}${DEFAULT_COLOR} upgrade aborted"
 		esac
+	fi
+}
+
+
+
+function update_package() {
+	if [ "$1" == "auru" ] ; then
+		echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} This action must be executed as 'root'"
+		exit 1
+	fi
+	if [ -d "$AUR_PATH/$1" ] ; then
+		cd $AUR_PATH/$1
+		if ! [ -f ".auruignore" ] ; then
+			git_output=$(git pull)
+			if [ "$git_output" == "Already up to date." ] && ! [ -f "./.aur_tbu" ]  ; then
+				echo -e "${GREEN}${bold}$1${normal}${DEFAULT_COLOR} is up-to-date"
+			else
+				echo -e "${YELLOW}${bold}$1${normal}${DEFAULT_COLOR} is not up-to-date"
+				read -p "Do you wish to upgrade '$1'? " yn
+				case $yn in
+					[Yy]* ) user_says_yes_to_update;;
+					[Nn]* ) user_says_no_to_update;;
+					* ) user_says_no_to_update; echo "${RED}${bold}$1:${normal}${DEFAULT_COLOR} upgrade aborted"
+				esac
+			fi
+		else
+			echo -e "${RED}${bold}$1:${normal}${DEFAULT_COLOR} ignored"
+		fi
+	else
+		echo -e "${RED}${bold}ERROR:${normal}${DEFAULT_COLOR} '$1' not installed"
 	fi
 }
 
@@ -71,6 +101,11 @@ function check_for_updates() {
 		echo -e "${YELLOW}${bold}No repository installed${normal}${DEFAULT_COLOR}"
 		exit 0
 	fi
+	if ! [ -z "$1" ]; then
+		update_package "$1"
+		exit 0
+	fi
+
 	for folder in $AUR_PATH/*/ ; do
 		cd $folder
 		sw_name=${folder:$PREFIX_LEN:-1}
@@ -226,7 +261,7 @@ function get_help() {
 	echo -e "\tauru {-Q --query}"
 	echo -e "\tauru {-R --remove} <package>"
 	echo -e "\tauru {-S --sync} <package | repository link>"
-	echo -e "\tauru {-U --upgrade}"
+	echo -e "\tauru {-U --upgrade} <package>"
 	echo -e "\tauru {-V --version}"
 }
 
@@ -244,7 +279,7 @@ echo -e "\t|_|  (_)\`---(_)|_| \)\ \`---(_)"
 echo -e "\t                   (__)      "
 echo -e "\n${DEFAULT_COLOR}"
 
-	echo -e "\tauru v.0.4.0"
+	echo -e "\tauru v.0.5.0"
 	echo -e "\tCopyright © 2020, Nicolas Carolo. All rights reserved."
 
 	echo -e "\tRedistribution and use in source and binary forms, with or without modification,"
