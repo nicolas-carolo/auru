@@ -18,7 +18,7 @@ if ! [ $(id -u) = 0 ]; then
 	exit 1
 fi
 
-echo "Running the installer"
+echo "TEST: Running the installer"
 
 cp auru.sh /usr/bin/auru
 
