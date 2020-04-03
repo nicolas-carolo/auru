@@ -123,6 +123,7 @@ function check_for_updates() {
 						* ) user_says_no_to_update; echo "${RED}${bold}$sw_name:${normal}${DEFAULT_COLOR} upgrade aborted"
 					esac
 				else
+					touch .aur_tbu
 					echo -e "${YELLOW}${bold}$sw_name${normal}${DEFAULT_COLOR} is not up-to-date. Run '${bold}sudo auru -U auru${normal}' to update"
 				fi
 			fi
@@ -279,7 +280,7 @@ echo -e "\t|_|  (_)\`---(_)|_| \)\ \`---(_)"
 echo -e "\t                   (__)      "
 echo -e "\n${DEFAULT_COLOR}"
 
-	echo -e "\tauru v.0.5.0"
+	echo -e "\tauru v.0.5.1"
 	echo -e "\tCopyright © 2020, Nicolas Carolo. All rights reserved."
 
 	echo -e "\tRedistribution and use in source and binary forms, with or without modification,"
