@@ -107,13 +107,15 @@ function list_packages() {
 	fi
 	for folder in $AUR_PATH/*/ ; do
 		cd $folder
-		pkg_version=$(sed -n -e '/pkgver=/ s/.*\= *//p' PKGBUILD | head -n 1)
-		pkg_rel=$(sed -n -e '/pkgrel=/ s/.*\= *//p' PKGBUILD | head -n 1)
-		sw_name=${folder:$PREFIX_LEN:-1}
-		if ! [ -f ".auruignore" ] ; then
-			echo -e "${bold}$sw_name${GREEN} $pkg_version-$pkg_rel${normal}${DEFAULT_COLOR}"
-		else
-			echo -e "${bold}${RED}$sw_name $pkg_version-$pkg_rel${normal}${DEFAULT_COLOR}: not installed"
+		if [ -f "PKGBUILD" ] ; then
+			pkg_version=$(sed -n -e '/pkgver=/ s/.*\= *//p' PKGBUILD | head -n 1)
+			pkg_rel=$(sed -n -e '/pkgrel=/ s/.*\= *//p' PKGBUILD | head -n 1)
+			sw_name=${folder:$PREFIX_LEN:-1}
+			if ! [ -f ".auruignore" ] ; then
+				echo -e "${bold}$sw_name${GREEN} $pkg_version-$pkg_rel${normal}${DEFAULT_COLOR}"
+			else
+				echo -e "${bold}${RED}$sw_name $pkg_version-$pkg_rel${normal}${DEFAULT_COLOR}: not installed"
+			fi
 		fi
 	done
 }
