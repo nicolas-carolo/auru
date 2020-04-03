@@ -27,13 +27,42 @@ function user_says_yes_to_update() {
 	makepkg -si
 	if [ -f "./.aur_tbu" ]; then
 		rm .aur_tbu
-		git pull
+	fi
+}
+
+
+
+function user_says_yes_to_update_auru() {
+	sh install.sh
+	if [ -f "./.aur_tbu" ]; then
+		rm .aur_tbu
+	fi
+}
+
+
+function update_auru() {
+	cd ${SUDO_AUR_PATH}auru
+	sudo -u $SUDO_USER git_output=$(git pull)
+	if [ "$git_output" == "Already up to date." ] && ! [ -f "./.aur_tbu" ]  ; then
+		echo -e "${GREEN}${bold}auru${normal}${DEFAULT_COLOR} is up-to-date"
+	else
+		echo -e "${YELLOW}${bold}auru${normal}${DEFAULT_COLOR} is not up-to-date"
+		read -p "Do you wish to upgrade 'auru'? " yn
+		case $yn in
+			[Yy]* ) user_says_yes_to_update_auru;;
+			[Nn]* ) user_says_no_to_update;;
+			* ) user_says_no_to_update; echo "${RED}${bold}auru:${normal}${DEFAULT_COLOR} upgrade aborted"
+		esac
 	fi
 }
 
 
 
 function check_for_updates() {
+	if [ $(id -u) = 0 ] && [[ "$2" == "auru" ]] ; then
+		update auru
+		exit 0
+	fi
 	if [ $(id -u) = 0 ]; then
 		echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} This action must NOT be executed as 'root'"
 		exit 1
