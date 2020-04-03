@@ -42,7 +42,7 @@ function user_says_yes_to_update_auru() {
 
 function update_auru() {
 	cd ${SUDO_AUR_PATH}auru
-	git_output=$(sudo -u $SUDO_USER git pull)
+	git_output=$(sudo -u $SUDO_USER git pull --force)
 	if [ "$git_output" == "Already up to date." ] && ! [ -f "./.aur_tbu" ]  ; then
 		echo -e "${GREEN}${bold}auru${normal}${DEFAULT_COLOR} is up-to-date"
 	else
