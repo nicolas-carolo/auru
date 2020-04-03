@@ -27,7 +27,9 @@ fi
 
 # TODO edit cp
 # Create auru folder
-sudo -u $SUDO_USER cp -r ../auru $SUDO_AUR_PATH
+if ! [ -d "$SUDO_AUR_PATH/auru" ] ; then
+	sudo -u $SUDO_USER cp -r ../auru $SUDO_AUR_PATH
+fi
 
 
 # Create auru manual entry
