@@ -13,9 +13,9 @@ Author: Nicolas Carolo <nicolascarolo.dev@gmail.com>
 
 Copyright: © 2020, Nicolas Carolo.
 
-Date: 2020-03-29
+Date: 2020-04-04
 
-Version: 0.4.0
+Version: 0.5.0
 
 
 ## PURPOSE
