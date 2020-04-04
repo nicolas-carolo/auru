@@ -18,6 +18,11 @@ if ! [ $(id -u) = 0 ]; then
 	exit 1
 fi
 
+if ! [ -f "/etc/arch-release" ] ; then
+	echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} this Linux distribution is not Arch Based"
+	exit 1
+fi
+
 echo "Running the installer..."
 
 cp auru.sh /usr/bin/auru

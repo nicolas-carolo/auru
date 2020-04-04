@@ -288,7 +288,7 @@ echo -e "\t|_|  (_)\`---(_)|_| \)\ \`---(_)"
 echo -e "\t                   (__)      "
 echo -e "\n${DEFAULT_COLOR}"
 
-	echo -e "\tauru v.0.5.1"
+	echo -e "\tauru v.0.5.2"
 	echo -e "\tCopyright © 2020, Nicolas Carolo. All rights reserved."
 
 	echo -e "\tRedistribution and use in source and binary forms, with or without modification,"
@@ -319,19 +319,29 @@ echo -e "\n${DEFAULT_COLOR}"
 }
 
 
-operation=$1
-case $operation in
-	-B ) build_package "$2";;
-	--build ) build_package "$2";;
-	-Q ) list_packages;;
-	--query ) list_packages;;
-	-R ) remove_package "$2";;
-	--remove ) remove_package "$2";;
-	-U ) check_for_updates "$2";;
-	--upgrade ) check_for_updates "$2";;
-	-S ) get_package "$2";;
-	--sync ) get_package "$2";;
-	-V ) get_software_info;;
-	--version ) get_software_info;;
-	* ) get_help 
-esac
+
+if ! [ -f "/etc/arch-release" ] ; then
+	echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} this Linux distribution is not Arch Based"
+	exit 1
+fi
+if [ -d "$AUR_PATH" ] || [ -d "$SUDO_AUR_PATH" ] ; then
+	operation=$1
+	case $operation in
+		-B ) build_package "$2";;
+		--build ) build_package "$2";;
+		-Q ) list_packages;;
+		--query ) list_packages;;
+		-R ) remove_package "$2";;
+		--remove ) remove_package "$2";;
+		-U ) check_for_updates "$2";;
+		--upgrade ) check_for_updates "$2";;
+		-S ) get_package "$2";;
+		--sync ) get_package "$2";;
+		-V ) get_software_info;;
+		--version ) get_software_info;;
+		* ) get_help
+	esac
+else
+	echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} '~/AUR' not found"
+	exit 1
+fi
