@@ -324,6 +324,11 @@ if ! [ -f "/etc/arch-release" ] ; then
 	echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} this Linux distribution is not Arch Based"
 	exit 1
 fi
+which_output=$(which git)
+if ! [ "$which_output" == "/usr/bin/git" ] ; then
+	echo -e "${bold}${RED}ERROR:${DEFAULT_COLOR}${normal} git not installed. Install git for using auru"
+	exit 1
+fi
 if [ -d "$AUR_PATH" ] || [ -d "$SUDO_AUR_PATH" ] ; then
 	operation=$1
 	case $operation in
