@@ -55,7 +55,7 @@ $ sudo sh install.sh
 
 For a list of all commands you can run
 ```sh
-auru -h
+$ auru -h
 ```
 and for the relative functionalities run:
 ```sh
