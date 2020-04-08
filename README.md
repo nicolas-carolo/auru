@@ -1,4 +1,4 @@
-# auru: A shell script for keeping AUR packages up-to-date
+# auru: a shell script for keeping AUR packages up-to-date
 ```
   .--.  .-. .-.,---.  .-. .-. 
  / /\ \ | | | || .-.\ | | | | 
@@ -24,8 +24,11 @@ _auru_ is a simple shell script for keeping AUR packages up-to-date on Arch Linu
 
 ### Features
 
-* Check for new updates
-* Possibility of install new updates
+* Install and download a new AUR package
+* Remove installed AUR packages
+* Check and install new updates for AUR packages
+* Build already downloaded AUR packages
+* List all installed AUR packages
 
 ## MINIMUM REQUIREMENTS
 
@@ -50,8 +53,11 @@ $ sudo sh install.sh
 
 ## USAGE
 
-For a list of all commands you can run and for the relative functionalities run:
-
+For a list of all commands you can run
+```sh
+auru -h
+```
+and for the relative functionalities run:
 ```sh
 $ man auru
 ```
