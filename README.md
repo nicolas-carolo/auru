@@ -48,7 +48,7 @@ We can install _auru_ simply by doing:
 $ git clone https://github.com/nicolas-carolo/auru
 $ cd auru
 $ chmod +x install.sh
-$ sudo sh install.sh
+$ sudo ./install.sh
 ```
 
 ## USAGE
